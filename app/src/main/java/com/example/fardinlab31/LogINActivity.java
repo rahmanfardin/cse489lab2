@@ -1,6 +1,9 @@
 package com.example.fardinlab31;
 
 import android.os.Bundle;
+import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.EditText;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -10,15 +13,20 @@ import androidx.core.view.WindowInsetsCompat;
 
 public class LogINActivity extends AppCompatActivity {
 
+    private EditText etEmail, etPassword;
+    private CheckBox cbRUser, cbRM;
+    private Button  noAccount, login;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        EdgeToEdge.enable(this);
         setContentView(R.layout.activity_log_inactivity);
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
-            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-            return insets;
-        });
+
+        etEmail = findViewById(R.id.etEmail);
+        etPassword = findViewById(R.id.etPassword);
+        cbRM = findViewById(R.id.cbRM);
+        cbRUser = findViewById(R.id.cbRUser);
+        noAccount = findViewById(R.id.noAccount);
+        login = findViewById(R.id.login);
     }
 }
