@@ -1,6 +1,8 @@
 package com.example.fardinlab31;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
@@ -13,7 +15,7 @@ import androidx.core.view.WindowInsetsCompat;
 public class AddItemActivity extends AppCompatActivity {
 
     private EditText etItemName,etCost,etDate;
-    private Button addItem;
+    private Button addItem, back;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,5 +26,27 @@ public class AddItemActivity extends AppCompatActivity {
         etCost = findViewById(R.id.etCost);
         etDate = findViewById(R.id.etDate);
         addItem = findViewById(R.id.addItem);
+        back = findViewById(R.id.back);
+
+        back.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(AddItemActivity.this, ShowReportActivity.class));
+            }
+        });
+        addItem.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String itemname = etItemName.getText().toString().trim();
+                String cost = etCost.getText().toString().trim();
+                String date = etDate.getText().toString().trim();
+
+                System.out.println(itemname);
+                System.out.println(cost);
+                System.out.println(date);
+
+                //startActivity(new Intent(AddItemActivity.this, ShowReportActivity.class));
+            }
+        });
     }
 }
