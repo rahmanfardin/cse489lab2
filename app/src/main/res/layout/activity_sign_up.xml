@@ -32,7 +32,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:inputType="textPersonName"
-        android:hint="Enter your name" />
+        android:hint="Enter your name"
+        android:maxLength="8"/>
     <!-- Email -->
     <TextView
         android:layout_width="match_parent"
@@ -64,7 +65,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:inputType="phone"
-        android:hint="Enter your Phone" />
+        android:hint="Enter your Phone"
+        android:maxLength="13"/>
     <!-- Password -->
     <TextView
         android:layout_width="match_parent"
@@ -80,7 +82,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:inputType="textPassword"
-        android:hint="Enter your Password" />
+        android:hint="Enter your Password"
+        android:maxLength="4"/>
     <!-- Confirm Password -->
     <TextView
         android:layout_width="match_parent"
@@ -95,7 +98,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:inputType="textPassword"
-        android:hint="Re-Enter your Password" />
+        android:hint="Re-Enter your Password"
+        android:maxLength="4"/>
 
     <!-- Remember User -->
     <CheckBox

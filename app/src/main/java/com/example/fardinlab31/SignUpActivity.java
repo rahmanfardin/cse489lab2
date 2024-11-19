@@ -1,30 +1,50 @@
 package com.example.fardinlab31;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.Toast;
 
-import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
+
+import java.util.regex.Pattern;
+
 
 public class SignUpActivity extends AppCompatActivity {
 
-    private EditText etUserName,etEmail,etPhone,etPassword,etCPassword;
-    private CheckBox cbRM,cbRUser;
-    private Button haveAccount,signUP;
+    private EditText etUserName, etEmail, etPhone, etPassword, etCPassword;
+    private CheckBox cbRM, cbRUser;
+    private Button haveAccount, signUP;
 
+
+    private SharedPreferences sp;
+
+    private boolean isValidEmailId(String email) {
+
+        return Pattern.compile("^(([\\w-]+\\.)+[\\w-]+|([a-zA-Z]{1}|[\\w-]{2,}))@"
+                + "((([0-1]?[0-9]{1,2}|25[0-5]|2[0-4][0-9])\\.([0-1]?"
+                + "[0-9]{1,2}|25[0-5]|2[0-4][0-9])\\."
+                + "([0-1]?[0-9]{1,2}|25[0-5]|2[0-4][0-9])\\.([0-1]?"
+                + "[0-9]{1,2}|25[0-5]|2[0-4][0-9])){1}|"
+                + "([a-zA-Z]+[\\w-]+\\.)+[a-zA-Z]{2,4})$").matcher(email).matches();
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        sp = this.getSharedPreferences("my_sp", MODE_PRIVATE);
         setContentView(R.layout.activity_sign_up);
+        String email = sp.getString("USER-EMAIL", "NOT-YET-CREATED");
 
+        if (!email.equals("NOT-YET-CREATED")) {
+            System.out.println("from signup");
+            startActivity(new Intent(SignUpActivity.this, LogINActivity.class));
+            finishAffinity();
+        }
         etUserName = findViewById(R.id.etUserName);
         etEmail = findViewById(R.id.etEmail);
         etPhone = findViewById(R.id.etPhone);
@@ -45,15 +65,43 @@ public class SignUpActivity extends AppCompatActivity {
                 String phone = etPhone.getText().toString().trim();
                 String password = etPassword.getText().toString().trim();
                 String cPassword = etCPassword.getText().toString().trim();
-
-
+                if (!isValidEmailId(email)) {
+                    Toast.makeText(getApplicationContext(), "INValid Email Address.", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                if (userName.length() < 4) {
+                    Toast.makeText(SignUpActivity.this, "Name must be 4 to 8 ", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                if (phone.length() < 8) {
+                    Toast.makeText(SignUpActivity.this, "Phone number must be atleast 8 ", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                if (password.length() < 4) {
+                    Toast.makeText(SignUpActivity.this, "password must be 4", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                if (!password.equals(cPassword)) {
+                    Toast.makeText(SignUpActivity.this, "passwords don't match", Toast.LENGTH_SHORT).show();
+                    return;
+                }
                 System.out.println(userName);
                 System.out.println(email);
                 System.out.println(phone);
                 System.out.println(password);
                 System.out.println(cPassword);
+                SharedPreferences.Editor e = sp.edit();
+                e.putString("USER-NAME", userName);
+                e.putString("USER-EMAIL", email);
+                e.putString("USER-PHONE", phone);
+                e.putString("PASSWORD", password);
+                e.putBoolean("REMEMBER-ME", cbRM.isChecked());
+                e.putBoolean("REMEMBER-USER", cbRUser.isChecked());
+                e.apply();
+
 
                 startActivity(new Intent(SignUpActivity.this, LogINActivity.class));
+                finishAffinity();
             }
         });
         haveAccount.setOnClickListener(new View.OnClickListener() {
