@@ -33,18 +33,25 @@ public class SignUpActivity extends AppCompatActivity {
                 + "([a-zA-Z]+[\\w-]+\\.)+[a-zA-Z]{2,4})$").matcher(email).matches();
     }
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    protected void redirectUserOnExistingAccount(){
         sp = this.getSharedPreferences("my_sp", MODE_PRIVATE);
         setContentView(R.layout.activity_sign_up);
         String email = sp.getString("USER-EMAIL", "NOT-YET-CREATED");
 
+        //Redirect user if an account is already created.
         if (!email.equals("NOT-YET-CREATED")) {
-            System.out.println("from signup");
+            // System.out.println("from signup");
             startActivity(new Intent(SignUpActivity.this, LogINActivity.class));
             finishAffinity();
+            Toast.makeText(this, "From Signup You Have Been Redirected", Toast.LENGTH_SHORT).show();
         }
+    }
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        redirectUserOnExistingAccount();
+
         etUserName = findViewById(R.id.etUserName);
         etEmail = findViewById(R.id.etEmail);
         etPhone = findViewById(R.id.etPhone);
@@ -66,23 +73,28 @@ public class SignUpActivity extends AppCompatActivity {
                 String password = etPassword.getText().toString().trim();
                 String cPassword = etCPassword.getText().toString().trim();
                 if (!isValidEmailId(email)) {
-                    Toast.makeText(getApplicationContext(), "INValid Email Address.", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(),
+                            "InValid Email Address.", Toast.LENGTH_SHORT).show();
                     return;
                 }
                 if (userName.length() < 4) {
-                    Toast.makeText(SignUpActivity.this, "Name must be 4 to 8 ", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(SignUpActivity.this,
+                            "Name must be 4 to 8 ", Toast.LENGTH_SHORT).show();
                     return;
                 }
                 if (phone.length() < 8) {
-                    Toast.makeText(SignUpActivity.this, "Phone number must be atleast 8 ", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(SignUpActivity.this,
+                            "Phone number must be atleast 8 ", Toast.LENGTH_SHORT).show();
                     return;
                 }
                 if (password.length() < 4) {
-                    Toast.makeText(SignUpActivity.this, "password must be 4", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(SignUpActivity.this, "password must be 4",
+                            Toast.LENGTH_SHORT).show();
                     return;
                 }
                 if (!password.equals(cPassword)) {
-                    Toast.makeText(SignUpActivity.this, "passwords don't match", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(SignUpActivity.this, "passwords don't match",
+                            Toast.LENGTH_SHORT).show();
                     return;
                 }
                 System.out.println(userName);

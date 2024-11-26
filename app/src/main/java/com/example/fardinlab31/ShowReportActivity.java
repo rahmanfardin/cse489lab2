@@ -8,9 +8,7 @@ import android.widget.ListView;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
+
 
 public class ShowReportActivity extends AppCompatActivity {
 
@@ -20,7 +18,7 @@ public class ShowReportActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        EdgeToEdge.enable(this);
+        //EdgeToEdge.enable(this);
         setContentView(R.layout.activity_show_report);
         lvExpenditureList = findViewById(R.id.lvExpenditureList);
         back = findViewById(R.id.back);

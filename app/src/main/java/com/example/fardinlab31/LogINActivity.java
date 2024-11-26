@@ -9,11 +9,9 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import androidx.activity.EdgeToEdge;
+
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
+
 
 public class LogINActivity extends AppCompatActivity {
 
@@ -63,13 +61,16 @@ public class LogINActivity extends AppCompatActivity {
                 String email = etEmail.getText().toString().trim();
                 String password = etPassword.getText().toString().trim();
                 if (!getEmail.equals(etEmail.getText().toString().trim())) {
-                    Toast.makeText(LogINActivity.this, "Email is INVALID", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(LogINActivity.this, "Email is INVALID",
+                            Toast.LENGTH_SHORT).show();
                     return;
                 }
                 if (!getPassword.equals(etPassword.getText().toString().trim())) {
-                    Toast.makeText(LogINActivity.this, "Password IS invalid", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(LogINActivity.this, "Password IS invalid",
+                            Toast.LENGTH_SHORT).show();
                     return;
                 }
+                System.out.println("successful login");
                 System.out.println(email);
                 System.out.println(password);
 
@@ -78,7 +79,8 @@ public class LogINActivity extends AppCompatActivity {
                 editor.putBoolean("REMEMBER-USER", cbRUser.isChecked());
                 editor.apply();
 
-                startActivity(new Intent(LogINActivity.this, ShowReportActivity.class));
+                startActivity(new Intent(LogINActivity.this,
+                        ShowReportActivity.class));
             }
         });
     }
