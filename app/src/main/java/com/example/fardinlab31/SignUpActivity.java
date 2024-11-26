@@ -33,9 +33,8 @@ public class SignUpActivity extends AppCompatActivity {
                 + "([a-zA-Z]+[\\w-]+\\.)+[a-zA-Z]{2,4})$").matcher(email).matches();
     }
 
-    protected void redirectUserOnExistingAccount(){
+    protected void redirectUserOnExistingAccount() {
         sp = this.getSharedPreferences("my_sp", MODE_PRIVATE);
-        setContentView(R.layout.activity_sign_up);
         String email = sp.getString("USER-EMAIL", "NOT-YET-CREATED");
 
         //Redirect user if an account is already created.
@@ -50,7 +49,12 @@ public class SignUpActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        redirectUserOnExistingAccount();
+        setContentView(R.layout.activity_sign_up);
+        boolean value = getIntent().getBooleanExtra("FROM-LOGIN", false);
+        Toast.makeText(this, "" + value, Toast.LENGTH_SHORT).show();
+        if (!getIntent().getBooleanExtra("FROM-LOGIN", false))
+            redirectUserOnExistingAccount();
+
 
         etUserName = findViewById(R.id.etUserName);
         etEmail = findViewById(R.id.etEmail);
