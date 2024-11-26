@@ -50,8 +50,7 @@ public class SignUpActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_up);
-        boolean value = getIntent().getBooleanExtra("FROM-LOGIN", false);
-        Toast.makeText(this, "" + value, Toast.LENGTH_SHORT).show();
+
         if (!getIntent().getBooleanExtra("FROM-LOGIN", false))
             redirectUserOnExistingAccount();
 
