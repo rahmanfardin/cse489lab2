@@ -52,7 +52,9 @@ public class LogINActivity extends AppCompatActivity {
         noAccount.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(LogINActivity.this, SignUpActivity.class).putExtra("FROM-LOGIN", true));
+                startActivity(new Intent(
+                        LogINActivity.this, SignUpActivity.class).putExtra(
+                                "FROM-LOGIN", true));
             }
         });
         login.setOnClickListener(new View.OnClickListener() {

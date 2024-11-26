@@ -42,7 +42,8 @@ public class SignUpActivity extends AppCompatActivity {
             // System.out.println("from signup");
             startActivity(new Intent(SignUpActivity.this, LogINActivity.class));
             finishAffinity();
-            Toast.makeText(this, "From Signup You Have Been Redirected", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "From Signup You Have Been Redirected",
+                    Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -51,8 +52,11 @@ public class SignUpActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_up);
 
-        if (!getIntent().getBooleanExtra("FROM-LOGIN", false))
+        if (!getIntent().getBooleanExtra("FROM-LOGIN", false)) {
+            Toast.makeText(this, "You have been redirected form login page",
+                    Toast.LENGTH_SHORT).show();
             redirectUserOnExistingAccount();
+        }
 
 
         etUserName = findViewById(R.id.etUserName);
