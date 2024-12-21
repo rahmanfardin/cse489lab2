@@ -48,17 +48,17 @@ public class ShowReportActivity extends AppCompatActivity {
         Cursor c = idb.selectEvents("select * from items");
 
         while (c.moveToNext()){
-            String id = c.getString(0);
-            String itemname = c.getString(1);
-            Long date = c.getLong(2);
-            double cost = c.getDouble(3);
+            String aid = c.getString(0);
+            String aitemname = c.getString(1);
+            Long adate = c.getLong(2);
+            double acost = c.getDouble(3);
 
 
             System.out.println("from add");
-            System.out.println(id);
-            System.out.println(itemname);
-            System.out.println(date);
-            System.out.println(cost);
+            System.out.println(aid);
+            System.out.println(aitemname);
+            System.out.println(adate);
+            System.out.println(acost);
         }
 
     }

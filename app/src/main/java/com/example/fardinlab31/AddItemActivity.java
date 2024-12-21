@@ -59,16 +59,20 @@ public class AddItemActivity extends AppCompatActivity {
 
 
                 String ID = itemname+";"+currentTime;
+                itemDB idb  = new itemDB(AddItemActivity.this);
+
                 if (prevID != null){
                     ID = prevID;
+                    idb.updateEvent(ID, itemname, dateValue,costValue);
+                } else {
+                    idb.insertEvent(ID, itemname, dateValue,costValue);
                 }
                 //validate data
 
 
                 //if all data are valid the store.
 
-                itemDB idb  = new itemDB(AddItemActivity.this);
-                idb.updateEvent(ID, itemname, dateValue,costValue);
+
 
                 System.out.println(itemname);
                 System.out.println(cost);
