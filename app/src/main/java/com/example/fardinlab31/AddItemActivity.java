@@ -1,6 +1,8 @@
 package com.example.fardinlab31;
 
+import android.app.DatePickerDialog;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -9,17 +11,28 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.firebase.crashlytics.buildtools.reloc.org.apache.http.NameValuePair;
+import com.google.firebase.crashlytics.buildtools.reloc.org.apache.http.message.BasicNameValuePair;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
 
 public class AddItemActivity extends AppCompatActivity {
 
     private EditText etItemName, etCost, etDate;
     private Button addItem, back;
-    private String prevID = null;
 
+    private String id = "";
+
+    // TODO: date picker. date convertor. workable search feild
     private boolean validateInputs(String itemname, String cost, String date) {
-        // Check if the item name is not empty
         boolean returnBool = true;
+
+        // Check if the item name is not empty
         if (itemname.isEmpty()) {
             etItemName.setError("Item name is required");
             returnBool = false;
@@ -42,13 +55,19 @@ public class AddItemActivity extends AppCompatActivity {
         if (date.isEmpty()) {
             etDate.setError("Date is required");
             returnBool = false;
+        } else {
+            // Validate the date format (yyyy-MM-dd)
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+            sdf.setLenient(false);  // Set lenient to false to strictly enforce the date format
+            try {
+                sdf.parse(date);  // Try parsing the date
+            } catch (ParseException e) {
+                etDate.setError("Invalid date format. Use yyyy-MM-dd");
+                returnBool = false;
+            }
         }
 
-        // Optional: You can add further validation to check if the date format is correct
-        // For example, checking if the date is in the format "yyyy-MM-dd" (you can use a SimpleDateFormat to validate)
-
-        // If all checks pass
-        return  returnBool;
+        return returnBool;
     }
 
 
@@ -62,11 +81,34 @@ public class AddItemActivity extends AppCompatActivity {
         etDate = findViewById(R.id.etDate);
         addItem = findViewById(R.id.addItem);
         back = findViewById(R.id.back);
-        Intent i = getIntent();
-        if (i.hasExtra("ITEM-ID")) {
-            prevID = i.getStringExtra("ITEM-ID");
-        }
 
+        etDate.setOnClickListener(v -> {
+            final Calendar calendar = Calendar.getInstance();
+            int year = calendar.get(Calendar.YEAR);
+            int month = calendar.get(Calendar.MONTH);
+            int day = calendar.get(Calendar.DAY_OF_MONTH);
+
+            DatePickerDialog datePickerDialog = new DatePickerDialog(AddItemActivity.this,
+                    (view, year1, monthOfYear, dayOfMonth) -> {
+                        String selectedDate = String.format("%04d-%02d-%02d", year1, monthOfYear + 1, dayOfMonth);
+                        etDate.setText(selectedDate);
+                    }, year, month, day);
+            datePickerDialog.show();
+        });
+
+
+        Intent J = getIntent();
+
+        if (J != null && J.hasExtra("ID")) {
+            id = J.getStringExtra("ID");
+            String itemName = J.getStringExtra("ITEM-NAME");
+            long dateInMilliSeconds = J.getLongExtra("DATE", 0);
+            double cost = J.getDoubleExtra("COST", 0);
+            String date = dateCon(dateInMilliSeconds); // write code to convert milliseconds to date
+            etItemName.setText(itemName);
+            etCost.setText(String.valueOf(cost));
+            etDate.setText(date);
+        }
         back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -95,23 +137,71 @@ public class AddItemActivity extends AppCompatActivity {
                     itemDB idb = new itemDB(AddItemActivity.this);
 
                     // Update or insert the event into the database
-                    if (prevID != null) {
-                        ID = prevID;
-                        idb.updateEvent(ID, itemname, dateValue, Double.parseDouble(cost));
-                    } else {
-                        idb.insertEvent(ID, itemname, dateValue, Double.parseDouble(cost));
+                    System.out.println(id.isEmpty());
+                    try {
+                        if (id.isEmpty()) {
+                            idb.insertEvent(ID, itemname, dateValue, Double.parseDouble(cost));
+                        } else {
+                            ID = id;
+                            idb.updateEvent(ID, itemname, dateValue, Double.parseDouble(cost));
+
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
                     }
 
-                    // Output data to the console (for debugging purposes)
-                    System.out.println(itemname);
-                    System.out.println(cost);
-                    System.out.println(date);
 
+                    String keys[] = {"action", "sid", "semester", "id", "itemName", "cost", "date"};
+                    String values[] = {"backup", "2021-2-60-008", "2024-3", ID, itemname, cost, String.valueOf(dateValue)};
+                    httpRequest(keys, values);
+
+                    // Output data to the console (for debugging purposes)
+//                    System.out.println("ItemName:"+itemname);
+//                    System.out.println("ItemCOST:"+cost);
+//                    System.out.println("ItemDate:"+date);
+                    startActivity(new Intent(AddItemActivity.this,
+                            ShowReportActivity.class));
                     // Start the ShowReportActivity if needed
                     // startActivity(new Intent(AddItemActivity.this, ShowReportActivity.class));
+
                 }
             }
 
+
         });
+    }
+
+    private void httpRequest(final String keys[], final String values[]) {
+        new AsyncTask<Void, Void, String>() {
+            @Override
+            protected String doInBackground(Void... voids) {
+                List<NameValuePair> params = new ArrayList<NameValuePair>();
+                for (int i = 0; i < keys.length; i++) {
+                    params.add(new BasicNameValuePair(keys[i], values[i]));
+                }
+                String url = "https://www.muthosoft.com/univ/cse489/index.php";
+                try {
+                    String data = RemoteAccess.getInstance().makeHttpRequest(url, "POST", params);
+                    return data;
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                return null;
+            }
+
+            protected void onPostExecute(String data) {
+                if (data != null) {
+                    Toast.makeText(getApplicationContext(), data, Toast.LENGTH_SHORT).show();
+                }
+            }
+        }.execute();
+    }
+
+    private String dateCon(long mS) {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        Date date = new Date(mS);
+
+        String formattedDate = sdf.format(date);
+        return formattedDate;
     }
 }
