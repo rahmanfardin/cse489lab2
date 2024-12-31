@@ -9,6 +9,7 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -22,6 +23,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 
 public class ShowReportActivity extends AppCompatActivity {
@@ -30,6 +32,7 @@ public class ShowReportActivity extends AppCompatActivity {
     private ListView lvExpenditureList;
     private Button back, newItem, btnSearch;
     private EditText etSearch;
+    private TextView tvTotalCost;
     private CustomEventAdapter adapter;
 
     @Override
@@ -42,7 +45,7 @@ public class ShowReportActivity extends AppCompatActivity {
         newItem = findViewById(R.id.newItem);
         btnSearch = findViewById(R.id.btnSearch);
         etSearch = findViewById(R.id.etSearch);
-
+        tvTotalCost = findViewById(R.id.tvTotalCost);
 
         adapter = new CustomEventAdapter(this, items);
         lvExpenditureList.setAdapter(adapter);
@@ -57,6 +60,13 @@ public class ShowReportActivity extends AppCompatActivity {
                 intent.putExtra("DATE", selectedItem.date);
                 intent.putExtra("COST", selectedItem.cost);
                 startActivity(intent);
+            }
+        });
+        btnSearch.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String query = etSearch.getText().toString().trim();
+                loadLocalData(query);
             }
         });
 
@@ -77,7 +87,7 @@ public class ShowReportActivity extends AppCompatActivity {
     @Override
     public void onStart() {
         super.onStart();
-        loadLocalData();
+        loadLocalData("");
         loadRemoteData();
 
     }
@@ -138,20 +148,27 @@ public class ShowReportActivity extends AppCompatActivity {
                     System.out.println("new entry: " + id + itemName + cost + date + "\n");
                     idb.updateEvent(id, itemName, date, cost);
                 }
-
                 idb.close();
                 adapter.notifyDataSetChanged();
-
+                tvTotalCost.setText(String.valueOf(totalCost));
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    private void loadLocalData() {
+    private void loadLocalData(String searchBy) {
         items.clear();
+        double totalCost = 0.0;
         itemDB idb = new itemDB(this);
-        Cursor c = idb.selectEvents("select * from items");
+        String query ="select * from items";
+        if(!searchBy.isEmpty()){
+            long dateInMilliSecond = getDateInMilliSecond(searchBy);
+            query += " WHERE itemName LIKE '%"+searchBy+"%' OR date="+dateInMilliSecond;
+        }
+
+        Cursor c = idb.selectEvents(query);
+
         int count = 0;
         while (c.moveToNext()) {
             String aid = c.getString(0);
@@ -161,7 +178,7 @@ public class ShowReportActivity extends AppCompatActivity {
             double acost = c.getDouble(3);
 
             System.out.println("--------------------------------------------");
-            System.out.println("from add: "+ count);
+            System.out.println("from add: " + count);
             count++;
             System.out.println("ItemID:" + aid);
             System.out.println("ItemName:" + aitemname);
@@ -169,12 +186,28 @@ public class ShowReportActivity extends AppCompatActivity {
             System.out.println("ItemCost:" + acost);
             item i = new item(aid, aitemname, acost, adate);
             items.add(i);
+            totalCost += acost;
         }
+        idb.close();
         adapter.notifyDataSetChanged();
+        tvTotalCost.setText(String.valueOf(totalCost));
+    }
+
+    private long getDateInMilliSecond(String dateString) {
+        long milliseconds;
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+        try {
+            Date date = dateFormat.parse(dateString);
+            milliseconds = date.getTime();
+            return milliseconds;
+        }catch (Exception e){
+            e.printStackTrace();
+            return -1;
+        }
     }
 
     private String dateCon(long mS) {
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         Date date = new Date(mS);
 
         String formattedDate = sdf.format(date);

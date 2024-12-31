@@ -82,6 +82,30 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal">
         <!-- Button -->
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="2"
+            android:text="Total Cost:"
+            android:gravity="center_horizontal"
+            android:textStyle="bold"
+            android:textSize="30dp"/>
+
+        <TextView
+            android:id="@+id/tvTotalCost"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="N/A"
+            android:layout_weight="1"
+            android:gravity="center_horizontal"
+            android:textStyle="bold"
+            android:textSize="30dp"/>
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <!-- Button -->
         <Button
             android:id="@+id/back"
             android:layout_width="0dp"

@@ -3,7 +3,6 @@ package com.example.fardinlab31;
 
 
 import android.content.Context;
-import android.media.metrics.Event;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -47,7 +46,7 @@ public class CustomEventAdapter extends ArrayAdapter<item> {
     }
 
     private String getFormattedDate(long ms) {
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         Date date = new Date(ms);
 
         String formattedDate = sdf.format(date);
