@@ -1,5 +1,10 @@
 package com.example.fardinlab31;
 
+import static android.app.PendingIntent.getActivity;
+
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.AsyncTask;
@@ -10,8 +15,11 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.DialogFragment;
+import androidx.fragment.app.FragmentManager;
 
 import com.google.firebase.crashlytics.buildtools.reloc.org.apache.http.NameValuePair;
 import com.google.firebase.crashlytics.buildtools.reloc.org.apache.http.message.BasicNameValuePair;
@@ -29,8 +37,6 @@ import java.util.Locale;
 public class ShowReportActivity extends AppCompatActivity {
 
     private final ArrayList<item> items = new ArrayList<>();
-    private ListView lvExpenditureList;
-    private Button back, newItem, btnSearch;
     private EditText etSearch;
     private TextView tvTotalCost;
     private CustomEventAdapter adapter;
@@ -40,10 +46,10 @@ public class ShowReportActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         //EdgeToEdge.enable(this);
         setContentView(R.layout.activity_show_report);
-        lvExpenditureList = findViewById(R.id.lvExpenditureList);
-        back = findViewById(R.id.back);
-        newItem = findViewById(R.id.newItem);
-        btnSearch = findViewById(R.id.btnSearch);
+        ListView lvExpenditureList = findViewById(R.id.lvExpenditureList);
+        Button back = findViewById(R.id.back);
+        Button newItem = findViewById(R.id.newItem);
+        Button btnSearch = findViewById(R.id.btnSearch);
         etSearch = findViewById(R.id.etSearch);
         tvTotalCost = findViewById(R.id.tvTotalCost);
 
@@ -60,6 +66,33 @@ public class ShowReportActivity extends AppCompatActivity {
                 intent.putExtra("DATE", selectedItem.date);
                 intent.putExtra("COST", selectedItem.cost);
                 startActivity(intent);
+            }
+        });
+        lvExpenditureList.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long delete_id) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(ShowReportActivity.this);
+                builder.setMessage(R.string.dialog_message)
+                        .setTitle(R.string.dialog_title);
+                item selectedItem = items.get(position);
+                //Toast.makeText(ShowReportActivity.this, String.valueOf(selectedItem.ID), Toast.LENGTH_SHORT).show();
+                // Add the buttons.
+                builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        if(deleteRemoteData(selectedItem.ID)){
+                            Toast.makeText(ShowReportActivity.this, "Your data has been deleted!!", Toast.LENGTH_SHORT).show();
+                        }else
+                            Toast.makeText(ShowReportActivity.this, "Something went Wrong", Toast.LENGTH_SHORT).show();
+                    }
+                });
+                builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        // User cancels the dialog.
+                    }
+                });
+                AlertDialog dialog = builder.create();
+                dialog.show();
+                return true;
             }
         });
         btnSearch.setOnClickListener(new View.OnClickListener() {
@@ -82,6 +115,22 @@ public class ShowReportActivity extends AppCompatActivity {
                 startActivity(new Intent(ShowReportActivity.this, AddItemActivity.class));
             }
         });
+    }
+
+    private boolean deleteRemoteData(String deleteId) {
+        String[] keys = {"action", "sid", "semester", "id"};
+        String[] values = {"remove", "2021-2-60-008", "2024-3", deleteId};
+        try {
+            itemDB idb = new itemDB(ShowReportActivity.this);
+            idb.deleteEvent(deleteId);
+            //idb.close();
+            httpRequest(keys, values);
+            onStart();
+            return true;
+        }catch (Exception e){
+            e.printStackTrace();
+            return false;
+        }
     }
 
     @Override
@@ -148,7 +197,7 @@ public class ShowReportActivity extends AppCompatActivity {
                     System.out.println("new entry: " + id + itemName + cost + date + "\n");
                     idb.updateEvent(id, itemName, date, cost);
                 }
-                idb.close();
+                //idb.close();
                 adapter.notifyDataSetChanged();
                 tvTotalCost.setText(String.valueOf(totalCost));
             }
@@ -188,7 +237,7 @@ public class ShowReportActivity extends AppCompatActivity {
             items.add(i);
             totalCost += acost;
         }
-        idb.close();
+        //idb.close();
         adapter.notifyDataSetChanged();
         tvTotalCost.setText(String.valueOf(totalCost));
     }

@@ -6,6 +6,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -23,8 +24,6 @@ import java.util.List;
 public class AddItemActivity extends AppCompatActivity {
 
     private EditText etItemName, etCost, etDate;
-    private Button addItem, back;
-
     private String id = "";
 
     private boolean validateInputs(String itemName, String cost, String date) {
@@ -75,8 +74,9 @@ public class AddItemActivity extends AppCompatActivity {
         etItemName = findViewById(R.id.etItemName);
         etCost = findViewById(R.id.etCost);
         etDate = findViewById(R.id.etDate);
-        addItem = findViewById(R.id.addItem);
-        back = findViewById(R.id.back);
+        Button addItem = findViewById(R.id.addItem);
+        Button back = findViewById(R.id.back);
+        TextView tvAddItem = findViewById(R.id.tvAddItem);
 
         etDate.setOnClickListener(v -> {
             final Calendar calendar = Calendar.getInstance();
@@ -103,6 +103,7 @@ public class AddItemActivity extends AppCompatActivity {
             etItemName.setText(itemName);
             etCost.setText(String.valueOf(cost));
             etDate.setText(date);
+            tvAddItem.setText("Edit Item");
         }
 
         back.setOnClickListener(v -> startActivity(new Intent(AddItemActivity.this, ShowReportActivity.class)));

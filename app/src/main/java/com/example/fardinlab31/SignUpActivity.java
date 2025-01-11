@@ -18,7 +18,6 @@ public class SignUpActivity extends AppCompatActivity {
 
     private EditText etUserName, etEmail, etPhone, etPassword, etCPassword;
     private CheckBox cbRM, cbRUser;
-    private Button haveAccount, signUP;
 
 
     private SharedPreferences sp;
@@ -68,8 +67,8 @@ public class SignUpActivity extends AppCompatActivity {
         cbRM = findViewById(R.id.cbRM);
         cbRUser = findViewById(R.id.cbRUser);
         //
-        haveAccount = findViewById(R.id.haveAccount);
-        signUP = findViewById(R.id.signUP);
+        Button haveAccount = findViewById(R.id.haveAccount);
+        Button signUP = findViewById(R.id.signUP);
 
         signUP.setOnClickListener(new View.OnClickListener() {
             @Override

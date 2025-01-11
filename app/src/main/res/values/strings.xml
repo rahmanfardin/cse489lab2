@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">fardinlab3.1</string>
+    <string name="ok">YES</string>
+    <string name="cancel">NO</string>
+    <string name="dialog_message">Are you sure you want to delete?</string>
+    <string name="dialog_title">Delete</string>
+    dialog_message
 </resources>

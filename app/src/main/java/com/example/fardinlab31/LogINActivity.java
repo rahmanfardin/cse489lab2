@@ -17,7 +17,6 @@ public class LogINActivity extends AppCompatActivity {
 
     private EditText etEmail, etPassword;
     private CheckBox cbRUser, cbRM;
-    private Button noAccount, login;
     private SharedPreferences sp;
 
     @Override
@@ -35,8 +34,8 @@ public class LogINActivity extends AppCompatActivity {
         etPassword = findViewById(R.id.etPassword);
         cbRM = findViewById(R.id.cbRM);
         cbRUser = findViewById(R.id.cbRUser);
-        noAccount = findViewById(R.id.noAccount);
-        login = findViewById(R.id.login);
+        Button noAccount = findViewById(R.id.noAccount);
+        Button login = findViewById(R.id.login);
 
         if (cbReUser) {
             etEmail.setText(getEmail);
@@ -70,6 +69,9 @@ public class LogINActivity extends AppCompatActivity {
                 if (!getPassword.equals(etPassword.getText().toString().trim())) {
                     Toast.makeText(LogINActivity.this, "Password IS invalid",
                             Toast.LENGTH_SHORT).show();
+                    return;
+                }if(getPassword.isEmpty() || getEmail.isEmpty()){
+                    Toast.makeText(LogINActivity.this, "Enter email or password", Toast.LENGTH_SHORT).show();
                     return;
                 }
                 System.out.println("successful login");
